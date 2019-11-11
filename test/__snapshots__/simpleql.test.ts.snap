@@ -1,0 +1,54 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`simple query ok 1`] = `
+Array [
+  Object {
+    "name": "$root",
+    "props": Array [
+      Object {
+        "field": "member",
+        "name": "honourMember",
+      },
+      Object {
+        "name": "payerStatus",
+      },
+    ],
+    "type": Object {
+      "name": "Member",
+    },
+  },
+  Object {
+    "name": "foo",
+    "type": Object {
+      "name": "All",
+    },
+  },
+  Object {
+    "name": "clause",
+    "type": Object {
+      "name": "Fengdie",
+      "param": Array [
+        Object {
+          "key": "path",
+          "value": "insmutual_clause",
+        },
+        Object {
+          "key": "base",
+          "value": "$foo",
+        },
+      ],
+    },
+  },
+  Object {
+    "name": "latest",
+    "type": Object {
+      "name": "Fengdie",
+      "param": Array [
+        Object {
+          "key": "insxhbbff_old_upgrade",
+        },
+      ],
+    },
+  },
+]
+`;
