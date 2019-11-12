@@ -20,7 +20,7 @@ A simple query language, just like grathql, but much simple.
 ### Usage
 
 ```js
-import { parse } from 'simpleql';
+import { parse } from 'simpleql-parse';
 const astTree = parse(`
   $root: Member {
     honourMember: member
