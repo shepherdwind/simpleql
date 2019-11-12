@@ -1,5 +1,6 @@
 import { parse } from "../src/simpleql";
 import 'should';
+import { AssertionError } from "assert";
 
 /**
  * Dummy test
@@ -29,5 +30,10 @@ describe('simple query', () => {
       latest: Fengdie(insxhbbff_old_upgrade)
     `);
     expect(astTree).toMatchSnapshot();
+  });
+
+  it ('error', () => {
+    expect(() => parse('root: Member { a: b ')).toThrow();
+    expect(() => parse('root: Member{}')).toThrow();
   });
 });
