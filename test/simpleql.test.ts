@@ -17,4 +17,17 @@ describe('simple query', () => {
     `);
     expect(astTree).toMatchSnapshot();
   });
+
+  it('no comma support', function () {
+    const astTree = parse(`
+      $root: Member {
+        honourMember: member
+        payerStatus
+      }
+      foo: All
+      clause: Fengdie(path: insmutual_clause, base: $foo)
+      latest: Fengdie(insxhbbff_old_upgrade)
+    `);
+    expect(astTree).toMatchSnapshot();
+  });
 });

@@ -4,11 +4,14 @@ export const parse = (input: string) => {
   return parse.getTokens();
 };
 
+const isEmpty = (str: string) => /\s/.test(str);
+
 enum KeyWord {
   SEMICOLON = ':',
   BRACE_LEFT = '{',
   BRACE_RIGHT = '}',
   COMMA = ',',
+  NEW_LINE = '\n',
   PIPE = '|',
   PARAM_START = '(',
   PARAM_END = ')',
@@ -97,11 +100,12 @@ class Parser {
           this.throwPraseError(tok);
         }
         // }, 模式，大括号结束部分支持逗号，直接忽略
-        if (this.matchNextNotEmptyToken(KeyWord.COMMA)) {
+        if (this.matchNextNotEmptyToken([ KeyWord.COMMA, KeyWord.NEW_LINE ])) {
           this.nextToken();
         }
         return { ended: false, node };
       case KeyWord.COMMA:
+      case KeyWord.NEW_LINE:
         return { ended: this.matchNextNotEmptyToken(KeyWord.BRACE_RIGHT), node };
       default:
         return { ended: false, node };
@@ -120,13 +124,18 @@ class Parser {
     const tok = this.pickNext();
     const type: AstTree['type'] = { name: value };
 
-    if (tok === KeyWord.PARAM_START) {
-      this.nextToken();
-      type.param = this.parseParams();
-    } else if (tok === KeyWord.BRACE_LEFT || tok === KeyWord.COMMA || tok === undefined) {
-      return type;
-    } else {
-      this.throwPraseError(tok);
+    switch (tok) {
+      case KeyWord.PARAM_START:
+        this.nextToken();
+        type.param = this.parseParams();
+      break;
+      case KeyWord.BRACE_LEFT:
+      case KeyWord.COMMA:
+      case KeyWord.NEW_LINE:
+      case undefined:
+        return type;
+      default:
+        this.throwPraseError(tok);
     }
 
     return type;
@@ -184,7 +193,10 @@ class Parser {
     return this.input[index + this.nextIndex];
   }
 
-  private matchNextNotEmptyToken(token: string) {
+  private matchNextNotEmptyToken(token: string | string[]) {
+    if (Array.isArray(token)) {
+      return token.indexOf(this.nextToken(0, false)) > -1;
+    }
     return this.nextToken(0, false) === token;
   }
 
@@ -193,10 +205,14 @@ class Parser {
     do {
       tok = this.input[index + this.nextIndex];
       index += 1;
-    } while (tok && !tok.trim());
+    } while (!opTable.has(tok) && tok && !tok.trim());
 
     if (move) {
       this.nextIndex += index;
+      // 如果遇到逗号，后面的换行符直接过滤，防止冲突
+      if (tok === KeyWord.COMMA) {
+        this.skipEmpty();
+      }
     }
     return tok;
   }
@@ -206,6 +222,9 @@ class Parser {
    * @param tok
    */
   private readValue() {
+    // 去除前面的空白
+    this.skipEmpty();
+
     let tok = this.pickNext();
     if (!tok) {
       return '';
@@ -220,7 +239,19 @@ class Parser {
       tok = this.pickNext(index);
       index += 1;
     }
-    return this.receiveToken(index - 1);
+    const value = this.receiveToken(index - 1);
+    return value;
+  }
+
+  private skipEmpty() {
+    let tok;
+    do {
+      tok = this.pickNext();
+      if (!isEmpty(tok)) {
+        break;
+      }
+      this.nextIndex += 1;
+    } while (true)
   }
 
   private throwPraseError(tok: string): never {
