@@ -19,6 +19,21 @@ describe('simple query', () => {
     expect(astTree).toMatchSnapshot();
   });
 
+  it('old patten', () => {
+    const astTree = parse(`
+      root: Member {
+        honourMember,
+        payerStatus
+      }
+      foo: All,
+      clause: Fengdie {
+        clause: insmutual_clause,
+        latest: insxhbbff_old_upgrade,
+      }
+    `);
+    expect(astTree).toMatchSnapshot();
+  });
+
   it('no comma support', function () {
     const astTree = parse(`
       $root: Member {

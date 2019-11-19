@@ -105,3 +105,44 @@ Array [
   },
 ]
 `;
+
+exports[`simple query old patten 1`] = `
+Array [
+  Object {
+    "name": "root",
+    "props": Array [
+      Object {
+        "name": "honourMember",
+      },
+      Object {
+        "name": "payerStatus",
+      },
+    ],
+    "type": Object {
+      "name": "Member",
+    },
+  },
+  Object {
+    "name": "foo",
+    "type": Object {
+      "name": "All",
+    },
+  },
+  Object {
+    "name": "clause",
+    "props": Array [
+      Object {
+        "field": "insmutual_clause",
+        "name": "clause",
+      },
+      Object {
+        "field": "insxhbbff_old_upgrade",
+        "name": "latest",
+      },
+    ],
+    "type": Object {
+      "name": "Fengdie",
+    },
+  },
+]
+`;
