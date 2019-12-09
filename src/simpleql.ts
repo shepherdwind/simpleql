@@ -15,7 +15,10 @@ enum KeyWord {
   PIPE = '|',
   PARAM_START = '(',
   PARAM_END = ')',
+  SQUARE_BRACKET_LEFT = '[',
+  SQUARE_BRACKET_RIGHT = ']',
 }
+
 const opTable = new Set<string>();
 
 for (const key of Object.keys(KeyWord)) {
@@ -24,7 +27,7 @@ for (const key of Object.keys(KeyWord)) {
 
 interface Param {
   key: string;
-  value?: string;
+  value?: string | string[];
 }
 /**
  * 解析语法后得到的 ast 结构，比如
@@ -159,7 +162,7 @@ class Parser {
           break;
         // 遇到分号，value 部分开始
         case KeyWord.SEMICOLON: {
-          param.value = this.readValue();
+          param.value = this.readParamValue();
           params.push(param);
 
           const next = this.nextToken();
@@ -177,6 +180,25 @@ class Parser {
       }
     } while (hasNext);
     return params;
+  }
+
+  private readParamValue() {
+    if (this.matchNextNotEmptyToken([ '"', '\'' ])) {
+      return this.readString();
+    }
+
+    const value = this.readValue();
+    if (!this.matchNextNotEmptyToken(KeyWord.SQUARE_BRACKET_LEFT)) {
+      return value;
+    }
+    // $xx[$$xxx.id] 暂时只支持一层解析
+    this.nextToken();
+    const next = this.readValue();
+    const tok = this.nextToken();
+    if (tok !== KeyWord.SQUARE_BRACKET_RIGHT) {
+      this.throwPraseError(tok);
+    }
+    return [ value, next ]
   }
 
   private receiveToken(index = 1) {
@@ -198,6 +220,21 @@ class Parser {
       return token.indexOf(this.nextToken(0, false)) > -1;
     }
     return this.nextToken(0, false) === token;
+  }
+
+  private readString() {
+    let tok = '';
+    const first = this.nextToken();
+    let index = 0;
+    do {
+      tok = this.input[index + this.nextIndex];
+      index += 1;
+      if (tok === undefined) {
+        this.throwPraseError(tok);
+      }
+    } while (tok !== first);
+
+    return first + this.receiveToken(index);
   }
 
   private nextToken(index = 0, move = true) {

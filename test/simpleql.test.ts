@@ -47,8 +47,19 @@ describe('simple query', () => {
     expect(astTree).toMatchSnapshot();
   });
 
+  it('dependency logic', () => {
+    const astTree = parse(`
+      contract: Contract(foo)
+      config: IopList(sceneCode: $sceneCodeMap[$$contract.planNo])
+      data: IopData($if: "contract.name > 1 || contract.id === 12", bar: 'a > 1')
+    `);
+    expect(astTree).toMatchSnapshot();
+  });
+
   it ('error', () => {
     expect(() => parse('root: Member { a: b ')).toThrow();
     expect(() => parse('root: Member{}')).toThrow();
+    expect(() => parse('root: Member($if: "a > 1)')).toThrow();
+    expect(() => parse('root: Member(code: $code[$$foo.bar)')).toThrow();
   });
 });

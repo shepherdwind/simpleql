@@ -1,5 +1,52 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`simple query dependency logic 1`] = `
+Array [
+  Object {
+    "name": "contract",
+    "type": Object {
+      "name": "Contract",
+      "param": Array [
+        Object {
+          "key": "foo",
+        },
+      ],
+    },
+  },
+  Object {
+    "name": "config",
+    "type": Object {
+      "name": "IopList",
+      "param": Array [
+        Object {
+          "key": "sceneCode",
+          "value": Array [
+            "$sceneCodeMap",
+            "$$contract.planNo",
+          ],
+        },
+      ],
+    },
+  },
+  Object {
+    "name": "data",
+    "type": Object {
+      "name": "IopData",
+      "param": Array [
+        Object {
+          "key": "$if",
+          "value": "\\"contract.name > 1 || contract.id === 12\\"",
+        },
+        Object {
+          "key": "bar",
+          "value": "'a > 1'",
+        },
+      ],
+    },
+  },
+]
+`;
+
 exports[`simple query no comma support 1`] = `
 Array [
   Object {
