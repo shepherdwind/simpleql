@@ -29,6 +29,10 @@ interface Param {
   key: string;
   value?: string | string[];
 }
+interface Processor {
+  name: string;
+  params: Array<string | string[]>;
+}
 /**
  * 解析语法后得到的 ast 结构，比如
  * $root:Member {
@@ -47,6 +51,7 @@ export interface AstTree {
   type?: {
     name: string;
     param?: Param[];
+    processors?: Processor[];
   };
   props?: AstTree[];
 }
@@ -115,6 +120,31 @@ class Parser {
     }
   }
 
+  private parseProcessorList() {
+    const processors: Processor[] = [];
+    this.nextToken();
+
+    let hasNext = true;
+    do {
+      const value = this.readValue();
+      const processor: Processor = { name: value, params: [] };
+      processors.push(processor);
+
+      if (this.matchNextNotEmptyToken([KeyWord.PARAM_START])) {
+        this.nextToken();
+        processor.params = this.parseProcessorParams();
+      }
+      if (this.matchNextNotEmptyToken([KeyWord.PIPE])) {
+        this.nextToken();
+        hasNext = true;
+      } else {
+        hasNext = false;
+      }
+    } while (hasNext);
+
+    return processors;
+  }
+
   private readType() {
     const value = this.readValue();
     if (!value) {
@@ -131,7 +161,13 @@ class Parser {
       case KeyWord.PARAM_START:
         this.nextToken();
         type.param = this.parseParams();
-      break;
+        if (this.matchNextNotEmptyToken([ KeyWord.PIPE ])) {
+          type.processors = this.parseProcessorList();
+        }
+        break;
+      case KeyWord.PIPE:
+        type.processors = this.parseProcessorList();
+        return type;
       case KeyWord.BRACE_LEFT:
       case KeyWord.COMMA:
       case KeyWord.NEW_LINE:
@@ -142,6 +178,33 @@ class Parser {
     }
 
     return type;
+  }
+
+  private parseProcessorParams() {
+    let hasNext = true;
+    const params: Processor['params'] = [];
+    const value = this.readParamValue();
+    params.push(value);
+    do {
+      const tok = this.nextToken();
+      switch (tok) {
+        // 遇到括号结束，参数部分结束
+        case KeyWord.PARAM_END:
+          hasNext = false;
+          break;
+        // 遇到分号，value 部分开始
+        case KeyWord.COMMA: {
+          const value = this.readParamValue();
+          params.push(value);
+          break;
+        }
+
+        // 默认情况，解析错误，位置字符
+        default:
+          this.throwPraseError(tok);
+      }
+    } while (hasNext);
+    return params;
   }
 
   /**
@@ -292,9 +355,12 @@ class Parser {
   }
 
   private throwPraseError(tok: string): never {
+    const start = Math.max(0, this.nextIndex - 50);
     // 读取 50 个字符
-    const errorLine = this.input.slice(this.nextIndex - 50, this.nextIndex);
-    const error = new Error(`token parse error, should not ${tok} at \n ${errorLine}`);
+    const errorLine = this.input.slice(start, this.nextIndex + 1).trim();
+    const empty = new Array(errorLine.length - 1).fill(' ');
+    const errorSubLine =  empty.join('') + '^';
+    const error = new Error(`Unexpected token '${tok}' at \n ${errorLine} \n ${errorSubLine}`);
     error.name = 'TokenParseError';
     throw error;
   }

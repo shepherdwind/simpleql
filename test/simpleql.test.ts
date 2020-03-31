@@ -62,4 +62,15 @@ describe('simple query', () => {
     expect(() => parse('root: Member($if: "a > 1)')).toThrow();
     expect(() => parse('root: Member(code: $code[$$foo.bar)')).toThrow();
   });
+
+  it('processor support', () => {
+    const astTree = parse(`
+      contract: ContractList | get(model.dataList, abc) | filter($filter) | sort($sort) | get("a > 0") {
+        a,
+        b,
+      }
+      clauseList: Fengdie(insmutual_clause) | assign | map($data)
+    `);
+    expect(astTree).toMatchSnapshot();
+  });
 });

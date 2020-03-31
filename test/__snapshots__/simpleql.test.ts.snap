@@ -193,3 +193,72 @@ Array [
   },
 ]
 `;
+
+exports[`simple query processor support 1`] = `
+Array [
+  Object {
+    "name": "contract",
+    "props": Array [
+      Object {
+        "name": "a",
+      },
+      Object {
+        "name": "b",
+      },
+    ],
+    "type": Object {
+      "name": "ContractList",
+      "processors": Array [
+        Object {
+          "name": "get",
+          "params": Array [
+            "model.dataList",
+            "abc",
+          ],
+        },
+        Object {
+          "name": "filter",
+          "params": Array [
+            "$filter",
+          ],
+        },
+        Object {
+          "name": "sort",
+          "params": Array [
+            "$sort",
+          ],
+        },
+        Object {
+          "name": "get",
+          "params": Array [
+            "\\"a > 0\\"",
+          ],
+        },
+      ],
+    },
+  },
+  Object {
+    "name": "clauseList",
+    "type": Object {
+      "name": "Fengdie",
+      "param": Array [
+        Object {
+          "key": "insmutual_clause",
+        },
+      ],
+      "processors": Array [
+        Object {
+          "name": "assign",
+          "params": Array [],
+        },
+        Object {
+          "name": "map",
+          "params": Array [
+            "$data",
+          ],
+        },
+      ],
+    },
+  },
+]
+`;
