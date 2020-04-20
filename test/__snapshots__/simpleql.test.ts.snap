@@ -124,6 +124,22 @@ Array [
     },
   },
   Object {
+    "name": "_foo",
+    "props": Array [
+      Object {
+        "name": "a",
+      },
+    ],
+    "type": Object {
+      "name": "None",
+      "param": Array [
+        Object {
+          "key": "$$data",
+        },
+      ],
+    },
+  },
+  Object {
     "name": "clause",
     "type": Object {
       "name": "Fengdie",

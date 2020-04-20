@@ -13,6 +13,7 @@ describe('simple query', () => {
         payerStatus,
       },
       foo: All,
+      _foo: None($$data) { a },
       clause: Fengdie(path: insmutual_clause, base: $foo),
       latest: Fengdie(insxhbbff_old_upgrade),
     `);

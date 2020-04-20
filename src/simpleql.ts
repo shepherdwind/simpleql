@@ -115,6 +115,10 @@ class Parser {
       case KeyWord.COMMA:
       case KeyWord.NEW_LINE:
         return { ended: this.matchNextNotEmptyToken(KeyWord.BRACE_RIGHT), node };
+      case KeyWord.BRACE_RIGHT:
+        // 回退一步
+        this.nextIndex -= 1;
+        return { ended: true, node };
       default:
         return { ended: false, node };
     }
@@ -358,7 +362,9 @@ class Parser {
     const start = Math.max(0, this.nextIndex - 50);
     // 读取 50 个字符
     const errorLine = this.input.slice(start, this.nextIndex + 1).trim();
-    const empty = new Array(errorLine.length - 1).fill(' ');
+    // 取最后一行
+    const errorLineItem = errorLine.split('\n').pop() || '';
+    const empty = new Array(errorLineItem.length - 1).fill(' ');
     const errorSubLine =  empty.join('') + '^';
     const error = new Error(`Unexpected token '${tok}' at \n ${errorLine} \n ${errorSubLine}`);
     error.name = 'TokenParseError';
