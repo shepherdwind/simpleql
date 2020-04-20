@@ -1,3 +1,7 @@
+## 1.2.1 2020-04-20
+
+- fix: support a: Foo { bar } syntax [!3](https://github.com/shepherdwind/simpleql/pull/3)
+
 ## 1.2.0 2020-03-31
 
 - support processor [!2](https://github.com/shepherdwind/simpleql/pull/2)
