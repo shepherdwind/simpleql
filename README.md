@@ -32,6 +32,6 @@ const astTree = parse(`
     a
     b: bdc
   }
-  latest: Fengdie(insxhbbff_old_upgrade)
+  latest: *Fengdie(insxhbbff_old_upgrade)
 `);
 ```

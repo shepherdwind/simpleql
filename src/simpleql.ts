@@ -1,4 +1,3 @@
-
 export const parse = (input: string) => {
   const parse = new Parser(input);
   return parse.getTokens();
@@ -17,6 +16,7 @@ enum KeyWord {
   PARAM_END = ')',
   SQUARE_BRACKET_LEFT = '[',
   SQUARE_BRACKET_RIGHT = ']',
+  FORCE = '*',
 }
 
 const opTable = new Set<string>();
@@ -52,6 +52,7 @@ export interface AstTree {
     name: string;
     param?: Param[];
     processors?: Processor[];
+    force?: boolean;
   };
   props?: AstTree[];
 }
@@ -68,6 +69,7 @@ class Parser {
     const astList: AstTree[] = [];
     let hasNext = true;
     do {
+      
       const { ended, node } = this.parseStatement();
       hasNext = !ended;
       if (node) {
@@ -150,6 +152,15 @@ class Parser {
   }
 
   private readType() {
+    this.skipEmpty();
+    const tokFirst = this.pickNext();
+    const type: AstTree['type'] = { name: '' };
+
+    if (tokFirst === KeyWord.FORCE) {
+      this.nextToken();
+      type.force = true;
+    }
+
     const value = this.readValue();
     if (!value) {
       this.throwPraseError('');
@@ -159,7 +170,7 @@ class Parser {
       return value;
     }
     const tok = this.pickNext();
-    const type: AstTree['type'] = { name: value };
+    type.name = value;
 
     switch (tok) {
       case KeyWord.PARAM_START:
