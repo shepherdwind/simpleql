@@ -1,3 +1,7 @@
+## 1.2.2 2020-06-23
+
+- feat: support a: *Foo { bar } [!4](https://github.com/shepherdwind/simpleql/pull/4)
+
 ## 1.2.1 2020-04-20
 
 - fix: support a: Foo { bar } syntax [!3](https://github.com/shepherdwind/simpleql/pull/3)

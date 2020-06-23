@@ -142,6 +142,7 @@ Array [
   Object {
     "name": "clause",
     "type": Object {
+      "force": true,
       "name": "Fengdie",
       "param": Array [
         Object {

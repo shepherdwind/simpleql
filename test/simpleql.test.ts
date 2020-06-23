@@ -14,7 +14,7 @@ describe('simple query', () => {
       },
       foo: All,
       _foo: None($$data) { a },
-      clause: Fengdie(path: insmutual_clause, base: $foo),
+      clause: *Fengdie(path: insmutual_clause, base: $foo),
       latest: Fengdie(insxhbbff_old_upgrade),
     `);
     expect(astTree).toMatchSnapshot();
